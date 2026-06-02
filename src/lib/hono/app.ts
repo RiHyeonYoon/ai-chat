@@ -51,12 +51,17 @@ app.post("/chat", async (c) => {
 
   const lastUserMessage = messages[messages.length - 1];
 
-  // 사용자 메시지 저장
+  // content가 배열(멀티모달)이면 JSON 직렬화해서 저장
+  const contentToStore =
+    typeof lastUserMessage.content === "string"
+      ? lastUserMessage.content
+      : JSON.stringify(lastUserMessage.content);
+
   await prisma.message.create({
     data: {
       conversationId,
       role: lastUserMessage.role,
-      content: lastUserMessage.content,
+      content: contentToStore,
     },
   });
 
